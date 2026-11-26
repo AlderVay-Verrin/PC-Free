@@ -53,7 +53,9 @@ html::-webkit-scrollbar { display: none; }
 
 body {
   font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
+  background:
+    radial-gradient(ellipse at 82% 4%, rgba(147,197,253,.28), transparent 34rem),
+    linear-gradient(145deg, #f8fafc 0%, var(--bg) 58%, #e8eef8 100%);
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
@@ -110,12 +112,13 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem 1.5rem;
-  gap: 0.75rem;
-  background: rgba(240,240,238,0.80);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  padding: .8rem 1.5rem;
+  gap: 1rem;
+  background: rgba(248,250,252,.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(15,23,42,.08);
+  box-shadow: 0 8px 28px rgba(15,23,42,.04);
 }
 
 .logo-container {
@@ -128,17 +131,22 @@ body::before {
 
 .nav-links-pill {
   display: flex; align-items: center;
-  gap: 2.5rem; padding: .75rem 2rem;
-  border-radius: .75rem; background-color: #EDEDED;
+  gap: .45rem; padding: .4rem;
+  border: 1px solid rgba(15,23,42,.06);
+  border-radius: 999px;
+  background: rgba(255,255,255,.72);
+  box-shadow: 0 2px 8px rgba(15,23,42,.04);
 }
 
 .nav-link {
-  font-size: .875rem; font-weight: 500;
-  color: #404040; text-decoration: none;
-  transition: color .2s;
+  padding: .58rem .85rem;
+  border-radius: 999px;
+  font-size: .8rem; font-weight: 600;
+  color: #475569; text-decoration: none;
+  transition: color .18s, background .18s, box-shadow .18s;
 }
-.nav-link:hover  { color: #111827; }
-.nav-link.active { color: #111827; }
+.nav-link:hover { color: #111827; background: rgba(15,23,42,.045); }
+.nav-link.active { color: var(--accent-dk); background: rgba(59,130,246,.10); }
 
 /* ══════════════════════════════
    PAGE LAYOUT
@@ -146,67 +154,135 @@ body::before {
 .page-layout {
   position: relative; z-index: 10;
   display: grid;
-  grid-template-columns: 240px 1fr;
-  max-width: 1140px;
+  grid-template-columns: minmax(220px, 252px) minmax(0, 1fr);
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 40px 24px 96px;
-  gap: 40px;
+  padding: 36px 28px 96px;
+  gap: clamp(24px, 4vw, 48px);
   align-items: start;
 }
 
 /* ── SIDEBAR ── */
+.sidebar-toggle { display: none; }
 .sidebar {
   position: sticky;
-  top: 80px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,.9);
-  padding: 20px 0;
-  overflow: hidden;
+  top: 92px;
+  max-height: calc(100vh - 112px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: rgba(255,255,255,.78);
+  border: 1px solid rgba(255,255,255,.92);
+  border-radius: 18px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 16px 48px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.95);
+  padding: 14px 0;
 }
 
 .sidebar-section {
-  padding: 4px 16px;
-  margin-bottom: 4px;
+  padding: 3px 12px;
+  margin-bottom: 2px;
 }
 
 .sidebar-label {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 10px 7px;
+  border: 0;
+  background: none;
   font-family: 'Sora', sans-serif;
   font-size: 10px;
   font-weight: 700;
   color: var(--muted);
   letter-spacing: 1px;
   text-transform: uppercase;
-  padding: 10px 8px 6px;
-  display: block;
+  text-align: left;
+  cursor: pointer;
+}
+.sidebar-label i {
+  font-size: 14px;
+  transition: transform .18s ease;
+}
+.sidebar-label[aria-expanded="false"] i { transform: rotate(-90deg); }
+.sidebar-links[hidden] { display: none; }
+
+.sidebar-search {
+  display: grid;
+  gap: 7px;
+  padding: 4px 16px 14px;
+}
+.sidebar-search > span {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+}
+.sidebar-search-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 11px;
+  border: 1px solid rgba(100,116,139,.20);
+  border-radius: 10px;
+  background: rgba(248,250,252,.88);
+  color: #64748b;
+}
+.sidebar-search-field:focus-within {
+  border-color: rgba(59,130,246,.55);
+  box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+}
+.sidebar-search-field i { font-size: 15px; }
+.sidebar-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--headline);
+  font: inherit;
+  font-size: 12px;
+}
+.sidebar-search input::placeholder { color: #94a3b8; }
+.sidebar-empty {
+  padding: 4px 18px 12px;
+  color: #64748b;
+  font-size: 12px;
 }
 
 .sidebar-link {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 7px 10px;
-  border-radius: 10px;
+  padding: 8px 10px;
+  border-radius: 9px;
   font-size: 13.5px;
   font-weight: 500;
   color: var(--nav);
   text-decoration: none;
-  transition: background .15s, color .15s;
+  transition: background .15s, color .15s, transform .15s;
   cursor: pointer;
 }
 .sidebar-link i { font-size: 15px; color: var(--muted); flex-shrink: 0; transition: color .15s; }
-.sidebar-link:hover { background: rgba(0,0,0,.04); color: var(--nav-hover); }
+.sidebar-link:hover { background: rgba(59,130,246,.07); color: var(--nav-hover); transform: translateX(2px); }
 .sidebar-link:hover i { color: var(--nav); }
 .sidebar-link.active { background: rgba(59,130,246,.09); color: var(--accent-dk); }
 .sidebar-link.active i { color: var(--accent); }
+.sidebar-link:focus-visible,
+.sidebar-label:focus-visible,
+.sidebar-toggle:focus-visible,
+.nav-link:focus-visible,
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid rgba(59,130,246,.48);
+  outline-offset: 3px;
+}
 
 .sidebar-divider {
   height: 1px;
-  background: rgba(0,0,0,.06);
-  margin: 8px 16px 12px;
+  background: rgba(15,23,42,.07);
+  margin: 8px 18px 10px;
 }
 
 /* ── MAIN CONTENT ── */
@@ -214,9 +290,13 @@ main { min-width: 0; }
 
 /* hero */
 .doc-hero {
-  margin-bottom: 40px;
-  padding-bottom: 36px;
-  border-bottom: 1px solid rgba(0,0,0,.07);
+  margin-bottom: 36px;
+  padding: clamp(24px, 4vw, 42px);
+  border: 1px solid rgba(255,255,255,.9);
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(255,255,255,.84), rgba(255,255,255,.54));
+  box-shadow: 0 18px 50px rgba(15,23,42,.07), inset 0 1px 0 #fff;
+  backdrop-filter: blur(22px);
 }
 
 .eyebrow {
@@ -305,8 +385,8 @@ main { min-width: 0; }
 
 /* ── SECTIONS ── */
 .doc-section {
-  margin-bottom: 56px;
-  scroll-margin-top: 90px;
+  margin-bottom: 48px;
+  scroll-margin-top: 104px;
 }
 
 .section-title {
@@ -341,9 +421,9 @@ main { min-width: 0; }
 
 /* ── GLASS CARD ── */
 .card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 18px;
+  background: rgba(255,255,255,.76);
+  border: 1px solid rgba(255,255,255,.95);
+  border-radius: 16px;
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
   box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,.9);
@@ -642,13 +722,45 @@ code {
 /* ── RESPONSIVE ── */
 @media (max-width: 860px) {
   .page-layout { grid-template-columns: 1fr; }
-  .sidebar { position: static; }
+  .page-layout { padding-top: 24px; }
+  .sidebar-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 13px 16px;
+    border: 1px solid rgba(255,255,255,.9);
+    border-radius: 14px;
+    background: rgba(255,255,255,.84);
+    box-shadow: 0 8px 24px rgba(15,23,42,.06);
+    color: var(--headline);
+    font: 600 13px 'Sora', sans-serif;
+    cursor: pointer;
+  }
+  .sidebar-toggle span { display: inline-flex; align-items: center; gap: 9px; }
+  .sidebar-toggle i { color: var(--accent); font-size: 17px; }
+  .sidebar-toggle .toggle-chevron { color: #64748b; transition: transform .18s ease; }
+  .sidebar-toggle[aria-expanded="true"] .toggle-chevron { transform: rotate(180deg); }
+  .sidebar { position: static; max-height: min(60vh, 480px); margin-top: 10px; }
+  .sidebar:not(.is-open) { display: none; }
   .req-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
-  .nav-links-pill { gap: 1rem; padding: .625rem 1rem; }
-  .nav-link { font-size: .75rem; }
+  .topbar { justify-content: flex-start; padding: .65rem .75rem; gap: .65rem; }
+  .logo-container { width: 2.4rem; height: 2.4rem; }
+  .nav-links-pill { max-width: calc(100vw - 64px); gap: .2rem; padding: .28rem; overflow-x: auto; scrollbar-width: none; }
+  .nav-links-pill::-webkit-scrollbar { display: none; }
+  .nav-link { flex: 0 0 auto; padding: .52rem .68rem; font-size: .68rem; }
+  .page-layout { padding: 18px 14px 64px; gap: 14px; }
+  .doc-hero { margin-bottom: 24px; border-radius: 18px; }
+  .doc-hero h1 { letter-spacing: -1px; }
+  .doc-section { margin-bottom: 36px; }
+  .card { padding: 18px; }
   pre { font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1809785313522754" crossorigin="anonymous"></script>
@@ -658,12 +770,12 @@ code {
   <div class="blob blob-2"></div>
 
   <!-- ══ TOP NAV ══ -->
-  <nav class="topbar">
-    <div class="logo-container">
+  <nav class="topbar" aria-label="Main navigation">
+    <a class="logo-container" href="index.html" aria-label="PC-Free home">
       <svg width="18" height="18" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path fill="rgb(84,84,84)" d="M 160 88 L 194 34 L 216 0 L 256 0 L 256 40 L 221.5 93.5 L 200 128 L 256 128 L 256 256 L 96 256 L 96 168 L 64.246 220 L 40 256 L 0 256 L 0 216 L 34 162 L 56 128 L 0 128 L 0 0 L 160 0 Z"/>
       </svg>
-    </div>
+    </a>
     <div class="nav-links-pill">
       <a href="index.html"     class="nav-link">HOME</a>
       <a href="quickstart.html" class="nav-link">QUICK START</a>
@@ -683,41 +795,60 @@ code {
 <div class="page-layout">
 
   <!-- SIDEBAR -->
-  <aside class="sidebar">
+  <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-expanded="false" aria-controls="docsSidebar">
+    <span><i class="ti ti-list-search" aria-hidden="true"></i> Browse documentation</span>
+    <i class="ti ti-chevron-down toggle-chevron" aria-hidden="true"></i>
+  </button>
+  <aside class="sidebar" id="docsSidebar" aria-label="Documentation navigation">
 
-    <div class="sidebar-section">
-      <span class="sidebar-label">Getting Started</span>
-      <a href="#overview"   class="sidebar-link active"><i class="ti ti-home"></i> Overview</a>
-      <a href="quickstart.html" class="sidebar-link"><i class="ti ti-rocket"></i> Quick Start</a>
-      <a href="#setup"      class="sidebar-link"><i class="ti ti-terminal"></i> Setup Guide</a>
+    <label class="sidebar-search">
+      <span>Search this guide</span>
+      <span class="sidebar-search-field">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <input id="sidebarSearch" type="search" placeholder="Find a topic..." autocomplete="off">
+      </span>
+    </label>
+    <p class="sidebar-empty" id="sidebarEmpty" role="status" hidden>No matching topics.</p>
+
+    <div class="sidebar-section" data-nav-group>
+      <button class="sidebar-label" type="button" aria-expanded="true" aria-controls="nav-start">Getting Started<i class="ti ti-chevron-down" aria-hidden="true"></i></button>
+      <nav class="sidebar-links" id="nav-start" aria-label="Getting started">
+        <a href="#overview" class="sidebar-link active"><i class="ti ti-home"></i> Overview</a>
+        <a href="#quickstart" class="sidebar-link"><i class="ti ti-rocket"></i> Quick Start</a>
+        <a href="#setup" class="sidebar-link"><i class="ti ti-terminal"></i> Setup Guide</a>
+      </nav>
     </div>
 
-    <div class="sidebar-divider"></div>
+    <div class="sidebar-divider" aria-hidden="true"></div>
 
-    <div class="sidebar-section">
-      <span class="sidebar-label">Reference</span>
-      <a href="#config"    class="sidebar-link"><i class="ti ti-settings"></i> Configuration</a>
-      <a href="#commands"  class="sidebar-link"><i class="ti ti-terminal-2"></i> Commands</a>
-      <a href="#compare"   class="sidebar-link"><i class="ti ti-table"></i> Comparison</a>
-      <a href="#reqs"      class="sidebar-link"><i class="ti ti-checklist"></i> Requirements</a>
+    <div class="sidebar-section" data-nav-group>
+      <button class="sidebar-label" type="button" aria-expanded="true" aria-controls="nav-reference">Reference<i class="ti ti-chevron-down" aria-hidden="true"></i></button>
+      <nav class="sidebar-links" id="nav-reference" aria-label="Reference">
+        <a href="#config" class="sidebar-link"><i class="ti ti-settings"></i> Configuration</a>
+        <a href="#commands" class="sidebar-link"><i class="ti ti-terminal-2"></i> Commands</a>
+        <a href="#compare" class="sidebar-link"><i class="ti ti-table"></i> Comparison</a>
+        <a href="#reqs" class="sidebar-link"><i class="ti ti-checklist"></i> Requirements</a>
+      </nav>
     </div>
 
-    <div class="sidebar-divider"></div>
+    <div class="sidebar-divider" aria-hidden="true"></div>
 
-    <div class="sidebar-section">
-      <span class="sidebar-label">Help</span>
-      <a href="#troubleshoot" class="sidebar-link"><i class="ti ti-bug"></i> Troubleshooting</a>
-      <a href="#roadmap"      class="sidebar-link"><i class="ti ti-map"></i> Roadmap</a>
-      <a href="#contribute"   class="sidebar-link"><i class="ti ti-git-pull-request"></i> Contributing</a>
+    <div class="sidebar-section" data-nav-group>
+      <button class="sidebar-label" type="button" aria-expanded="true" aria-controls="nav-help">Help<i class="ti ti-chevron-down" aria-hidden="true"></i></button>
+      <nav class="sidebar-links" id="nav-help" aria-label="Help">
+        <a href="#troubleshoot" class="sidebar-link"><i class="ti ti-bug"></i> Troubleshooting</a>
+        <a href="#roadmap" class="sidebar-link"><i class="ti ti-map"></i> Roadmap</a>
+        <a href="#contribute" class="sidebar-link"><i class="ti ti-git-pull-request"></i> Contributing</a>
+      </nav>
     </div>
 
-    <div class="sidebar-divider"></div>
+    <div class="sidebar-divider" aria-hidden="true"></div>
 
-    <div class="sidebar-section">
-      <a href="https://github.com/jephersonRD/pc-free" target="_blank" class="sidebar-link">
+    <div class="sidebar-section" data-nav-group>
+      <a href="https://github.com/jephersonRD/pc-free" target="_blank" rel="noopener noreferrer" class="sidebar-link">
         <i class="ti ti-brand-github"></i> GitHub Repo
       </a>
-      <a href="https://github.com/jephersonRD/pc-free/issues" target="_blank" class="sidebar-link">
+      <a href="https://github.com/jephersonRD/pc-free/issues" target="_blank" rel="noopener noreferrer" class="sidebar-link">
         <i class="ti ti-bug"></i> Report Bug
       </a>
     </div>
@@ -1233,6 +1364,81 @@ const observer = new IntersectionObserver(entries => {
   });
 }, { rootMargin: '-20% 0px -70% 0px' });
 sections.forEach(s => observer.observe(s));
+
+const sidebar = document.getElementById('docsSidebar');
+const sidebarToggle = document.getElementById('sidebarToggle');
+const sidebarSearch = document.getElementById('sidebarSearch');
+const sidebarEmpty = document.getElementById('sidebarEmpty');
+
+sidebarToggle.addEventListener('click', () => {
+  const isOpen = sidebarToggle.getAttribute('aria-expanded') === 'true';
+  sidebarToggle.setAttribute('aria-expanded', String(!isOpen));
+  sidebar.classList.toggle('is-open', !isOpen);
+});
+
+document.querySelectorAll('.sidebar-label').forEach(button => {
+  button.addEventListener('click', () => {
+    const expanded = button.getAttribute('aria-expanded') === 'true';
+    button.setAttribute('aria-expanded', String(!expanded));
+    document.getElementById(button.getAttribute('aria-controls')).hidden = expanded;
+  });
+});
+
+sidebarSearch.addEventListener('input', () => {
+  const query = sidebarSearch.value.trim().toLocaleLowerCase();
+  let visibleLinks = 0;
+
+  document.querySelectorAll('[data-nav-group]').forEach(group => {
+    const links = group.querySelectorAll('.sidebar-link');
+    let groupHasMatches = false;
+    links.forEach(link => {
+      const matches = link.textContent.toLocaleLowerCase().includes(query);
+      link.hidden = !matches;
+      if (matches) {
+        groupHasMatches = true;
+        visibleLinks += 1;
+      }
+    });
+    group.hidden = !groupHasMatches;
+    const groupNav = group.querySelector('.sidebar-links');
+    const groupButton = group.querySelector('.sidebar-label');
+    if (groupNav) {
+      if (query) {
+        groupNav.hidden = false;
+        groupButton.setAttribute('aria-expanded', 'true');
+      } else {
+        groupNav.hidden = groupButton.getAttribute('aria-expanded') !== 'true';
+      }
+    }
+  });
+
+  document.querySelectorAll('.sidebar-divider').forEach(divider => {
+    divider.hidden = Boolean(query);
+  });
+  sidebarEmpty.hidden = visibleLinks > 0;
+});
+
+sidebar.addEventListener('click', event => {
+  if (event.target.closest('.sidebar-link') && window.matchMedia('(max-width: 860px)').matches) {
+    sidebar.classList.remove('is-open');
+    sidebarToggle.setAttribute('aria-expanded', 'false');
+  }
+});
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && window.matchMedia('(max-width: 860px)').matches) {
+    sidebar.classList.remove('is-open');
+    sidebarToggle.setAttribute('aria-expanded', 'false');
+    sidebarToggle.focus();
+  }
+});
+
+window.matchMedia('(min-width: 861px)').addEventListener('change', event => {
+  if (event.matches) {
+    sidebar.classList.remove('is-open');
+    sidebarToggle.setAttribute('aria-expanded', 'false');
+  }
+});
 </script>
 
 <script type="application/ld+json">

@@ -1,14 +1,14 @@
-# PC-Free - Windows 10 in GitHub Codespaces | Run Windows 10 Free in Browser
+# PC-Free - Windows 11 in GitHub Codespaces | Run Windows 11 Free in Browser
 
-Run a complete Windows 10 environment in your browser using Docker and GitHub Codespaces. Free, fast, and no installation required.
+Run a complete Windows 11 environment in your browser using Docker and GitHub Codespaces. Free, fast, and no installation required.
 
 [![GitHub stars](https://img.shields.io/github/stars/jephersonRD/pc-free?style=social)](https://github.com/jephersonRD/pc-free/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/jephersonRD/pc-free?style=social)](https://github.com/jephersonRD/pc-free/network/members)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
-[![Windows 10](https://img.shields.io/badge/Windows-10-0078D6?style=flat&logo=windows&logoColor=white)](https://www.microsoft.com/windows)
+[![Windows 11](https://img.shields.io/badge/Windows-11-0078D6?style=flat&logo=windows&logoColor=white)](https://www.microsoft.com/windows)
 
-**[🇪🇸 Español](#español)** • **[🚀 Quick Start](#quick-start-run-windows-10-in-5-minutes)** • **[📖 Documentation](#documentation)** • **[🐛 Report Bug](https://github.com/jephersonRD/pc-free/issues)**
+**[🚀 Quick Start](#quick-start-run-windows-11-in-5-minutes)** • **[📖 Documentation](#documentation)** • **[🐛 Report Bug](https://github.com/jephersonRD/pc-free/issues)**
 
 ![Windows 10 Desktop in Browser](./images/windows10-desktop.png)
 
@@ -16,13 +16,13 @@ Run a complete Windows 10 environment in your browser using Docker and GitHub Co
 
 ## What is PC-Free?
 
-PC-Free is an open-source project that lets you run Windows 10 directly in your web browser using GitHub Codespaces and Docker. No local installation, no powerful hardware required, completely free.
+PC-Free is an open-source project that lets you run Windows 11 directly in your web browser using GitHub Codespaces and Docker. No local installation, no powerful hardware required, completely free.
 
 ### Key Benefits
 
 - ✅ **100% Free** - No hidden costs or subscriptions
 - ✅ **Browser-Based** - Access Windows from any device
-- ✅ **5-Minute Setup** - Deploy Windows 10 in minutes
+- ✅ **5-Minute Setup** - Deploy Windows 11 in minutes
 - ✅ **No PC Required** - Run Windows without owning a Windows PC
 - ✅ **Docker Container** - Isolated, secure, and portable
 - ✅ **Persistent Data** - Your files and apps survive restarts
@@ -34,9 +34,9 @@ PC-Free is an open-source project that lets you run Windows 10 directly in your 
 
 - [Features](#features)
 - [Use Cases](#use-cases---when-to-use-pc-free)
-- [Quick Start](#quick-start-run-windows-10-in-5-minutes)
+- [Quick Start](#quick-start-run-windows-11-in-5-minutes)
 - [System Requirements](#system-requirements)
-- [Installation Guide](#guía-rápida)
+- [Installation Guide](#quick-start)
 - [Usage Instructions](#usage-instructions)
 - [Configuration Options](#configuration-options)
 - [FAQ](#frequently-asked-questions-faq)
@@ -63,16 +63,16 @@ Compare PC-Free with other Windows cloud solutions:
 
 ---
 
-## Quick Start: Run Windows 10 in 5 Minutes
+## Quick Start: Run Windows 11 in 5 Minutes
 
 ### Method 1: One-Click GitHub Codespaces (Recommended)
 
-The fastest way to get Windows 10 running in your browser:
+The fastest way to get Windows 11 running in your browser:
 
 1. **Fork this repository** - Click "Fork" button at top right
 2. **Open Codespace** - Click "Code" → "Codespaces" → "Create codespace on main"
 3. **Wait for setup** - Environment loads automatically (~2 minutes)
-4. **Follow the Guía Rápida below**
+4. **Follow the Quick Start guide below**
 
 ### Method 2: Manual Docker Setup
 
@@ -80,117 +80,29 @@ For local Docker installation, see the complete guide below.
 
 ---
 
-## Guía Rápida
+## Quick Start
 
-### 1️⃣ Verifica el almacenamiento disponible
+1. Check available storage with `df -h`. If you change Docker's data directory, choose a filesystem with enough free space. Docker daemon configuration is optional and requires administrator access; do not point it at a directory containing unrelated data.
+2. Copy the environment template and edit it with your own values:
 
-```bash
-df -h
-```
+   ```bash
+   cp .env.example .env
+   ```
 
-Escoge la partición con más espacio libre.
+   `.env` is ignored by Git. Choose a strong Windows password. The optional GitHub follow check is not required to start the container.
 
-### 2️⃣ Crea la carpeta de datos para Docker
+3. Start Windows:
 
-```bash
-sudo mkdir -p /tmp/docker-data
-```
+   ```bash
+   docker compose -f windows11.yml up -d
+   ```
 
-### 3️⃣ Configura Docker
+   Open port **8006** in the Codespaces Ports tab and set it to **Public**. Windows data is stored in `/tmp/pc-free-windows` and survives container restarts while this Codespace exists. The default 3 GiB RAM / 2 CPU setting fits this Codespace; adjust `RAM_SIZE` or `CPU_CORES` in `.env` only if your host has more resources.
+4. Stop the container with `docker stop windows`. To view startup logs, use `docker logs -f windows`.
 
-Edita el archivo:
+The optional follow check can be run separately with `bash check_github_follow.sh`; it does not gate container startup.
 
-```bash
-sudo nano /etc/docker/daemon.json
-```
-
-Agrega:
-
-```json
-{
-  "data-root": "/tmp/docker-data"
-}
-```
-
-### 4️⃣ Reinicia tu Codespace
-
-Para aplicar los cambios de configuración.
-
-### 5️⃣ Verifica Docker
-
-```bash
-docker info
-```
-
-Asegúrate de que `Docker Root Dir` sea `/tmp/docker-data`.
-
----
-
-## 🧱 Archivo `windows10.yml`
-
-```yaml
-# Antes de ejecutar docker-compose up, ejecuta:
-# bash check_github_follow.sh || exit 1
-# Si no sigues a https://github.com/jephersonRD, el entorno no se iniciará.
-services:
-  windows:
-    image: dockurr/windows
-    container_name: windows
-    environment:
-      VERSION: "10"
-      USERNAME: ${WINDOWS_USERNAME}
-      PASSWORD: ${WINDOWS_PASSWORD}
-      RAM_SIZE: "10G"
-      CPU_CORES: "4"
-    cap_add:
-      - NET_ADMIN
-    ports:
-      - "8006:8006"
-      - "3389:3389/tcp"
-    volumes:
-      - /tmp/docker-data:/mnt/disco1
-      - windows-data:/mnt/windows-data
-    devices:
-      - "/dev/kvm:/dev/kvm"
-      - "/dev/net/tun:/dev/net/tun"
-    stop_grace_period: 2m
-    restart: always
-
-volumes:
-  windows-data:
-```
-
----
-
-## 🗝️ Archivo `.env`
-
-```ini
-WINDOWS_USERNAME=YourUsername
-WINDOWS_PASSWORD=YourPassword
-GITHUB_USER=YourGitHubUsername
-```
-
-### 🛑 Agrega este archivo a tu `.gitignore`:
-
-```bash
-echo ".env" >> .gitignore
-```
-
----
-
-## ▶️ Inicia el contenedor
-
-### Iniciar por primera vez
-
-```bash
-docker-compose -f windows10.yml up
-```
-
-### 🔌 Apagar la PC
-
-```bash
-docker stop windows
-```
+The optional `data-root` Docker daemon setting is host-wide and requires a Docker daemon restart. It is not needed for this Compose setup; in Codespaces, avoid changing it unless you understand the impact on existing Docker data.
 
 ---
 
@@ -220,7 +132,8 @@ docker stop windows
 Start the Windows container:
 
 ```bash
-docker-compose -f windows10.yml up -d
+bash check_github_follow.sh
+docker compose -f windows11.yml up -d
 ```
 
 ### Stop Windows Environment
@@ -254,7 +167,7 @@ Press Ctrl+C to exit log view.
 Remove container and all data volumes:
 
 ```bash
-docker-compose -f windows10.yml down -v
+docker compose -f windows11.yml down -v
 ```
 
 **⚠️ Warning**: This deletes all Windows data permanently.
@@ -265,25 +178,25 @@ docker-compose -f windows10.yml down -v
 
 ### Customize System Resources
 
-Edit `windows10.yml` to adjust resources:
+Edit `windows11.yml` to adjust resources:
 
 ```yaml
 environment:
-  VERSION: "10"              # Windows version (10 or 11)
-  RAM_SIZE: "10G"           # RAM allocation
-  CPU_CORES: "4"            # CPU core count
+  VERSION: "11"              # Windows 11
+  RAM_SIZE: "4G"              # RAM allocation
+  CPU_CORES: "2"              # CPU core count
   DISK_SIZE: "64G"          # Virtual disk size
   USERNAME: ${WINDOWS_USERNAME}
   PASSWORD: ${WINDOWS_PASSWORD}
 ```
 
-### Switch to Windows 11
+### Switch to Windows 10
 
-Change Windows version in environment:
+To use Windows 10 instead, change the version in the environment:
 
 ```yaml
 environment:
-  VERSION: "11"  # Windows 11
+  VERSION: "10"  # Windows 10
 ```
 
 ### Enable RDP Access
@@ -304,7 +217,7 @@ For slower systems, reduce resource allocation:
 
 ```yaml
 environment:
-  RAM_SIZE: "6G"     # Minimum for Windows 10
+  RAM_SIZE: "4G"     # RAM allocation
   CPU_CORES: "2"     # Minimum cores
 ```
 
@@ -403,6 +316,21 @@ df -h
 ```
 
 ### Container Keeps Restarting
+
+Closing or refreshing the browser does not restart the container. The Compose configuration limits automatic restarts to 5 attempts and includes a web health check.
+
+If a restart loop is still happening, stop it explicitly and inspect the latest log:
+
+```bash
+docker stop windows
+docker logs --tail 100 windows
+```
+
+Then start again only after fixing the reported issue:
+
+```bash
+docker compose -f windows11.yml up -d
+```
 
 Check if KVM is available:
 
@@ -509,16 +437,9 @@ If PC-Free helped you, consider:
 
 ---
 
-## 🇪🇸 Español
+## More Documentation
 
-### Inicio Rápido en Español
-
-1. Haz fork del repositorio
-2. Abre en Codespace
-3. Sigue la Guía Rápida arriba
-4. Accede al puerto 8006
-
-[Ver documentación completa →](https://github.com/jephersonRD/pc-free/wiki)
+See the [project wiki](https://github.com/jephersonRD/pc-free/wiki) for additional setup and troubleshooting guides.
 
 ---
 
